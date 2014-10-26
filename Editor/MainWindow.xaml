@@ -1,0 +1,92 @@
+﻿<Window x:Class="Editor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="G.A.T.E"
+        Width="800"
+        Height="600">
+
+  <DockPanel>
+    <!-- Main Menu -->
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="File">
+        <MenuItem Header="New Game Config" Click="NewGameClicked"/>
+        <MenuItem Header="Load Game Config" Click="LoadGameClicked"/>
+        <MenuItem Header="Save Game Config" Click="SaveGameClicked"/>
+        <MenuItem Header="Save Game Config As" Click="SaveGameAsClicked"/>
+        <MenuItem Header="Exit" Click="ExitClicked"/>
+      </MenuItem>
+      <MenuItem Header="Level">
+        <MenuItem Header="New Level" Click="NewLevelClicked"/>
+        <MenuItem Header="Load Level" Click="LoadLevelClicked"/>
+        <MenuItem Header="Save Level" Click="SaveLevelClicked"/>
+        <MenuItem Header="Save Level As" Click="SaveLevelAsClicked"/>
+      </MenuItem>
+      <MenuItem Header="Tools">
+        <MenuItem Header="Import Components" Click="ImportComponentsClicked"/>
+        <MenuItem Header="Import TileSheet" Click="ImportTileSheetClicked"/>
+        <MenuItem Header="Import Tester" Click="ImportTesterClicked"/>
+        <MenuItem Header="Create Prototype" Click="CreatePrototypeClicked"/>
+      </MenuItem>
+      <MenuItem Header="View">
+        <MenuItem Header="Show Config Data" Click="ShowConfigClicked"/>
+        <MenuItem Header="Show Tools Panel" Click="ShowToolsClicked"/>
+        <MenuItem Header="Show Hints Panel" Click="ShowHintsClicked"/>
+        <MenuItem Header="Show Message Panel" Click="ShowMessagesClicked"/>
+        <MenuItem Header="Show Undo/Redo Queues" Click="ShowActionQueuesClicked"/>
+      </MenuItem>
+      <MenuItem Header="Test" Click="TestClicked">
+      </MenuItem>
+      <MenuItem Header="Help" Click="HelpClicked">
+      </MenuItem>
+    </Menu>
+
+    <!-- Define Grid At Bottom of Editor -->
+    <Border DockPanel.Dock="Bottom" Background="LightGray" BorderThickness="0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Guide Box -->
+        <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Guide" Margin="0,0,0,3"/>
+          <TextBox Name="GuideBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Editing Hints"/>
+        </StackPanel>
+
+        <!-- System Message Box -->
+        <StackPanel Grid.Column="1" Grid.Row="0" Margin="5">
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="System Messages" Margin="0,0,0,3"/>
+          <TextBox Name="SysMsgBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Messages"/>
+        </StackPanel>
+
+        <!-- Tool Tabs -->
+        <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" TabStripPlacement="Left" Margin="5">
+          <TabItem Name="TileTab" Header="Tiles">
+
+          </TabItem>
+          <TabItem Name="PlaceTab" Header="Placeables">
+
+          </TabItem>
+          <TabItem Name="TriggerTab" Header="Trigger">
+
+          </TabItem>
+        </TabControl>
+      </Grid>
+    </Border>
+    
+    <!-- Map Canvas -->
+    <Border DockPanel.Dock="Bottom" BorderBrush="Black" Background="LightGray" BorderThickness="0,1,0,2">
+      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Canvas Name="MapCanvas" Height="2000" Width="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
+          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Map Canvas"/>
+        </Canvas>
+      </ScrollViewer>
+    </Border>
+
+  </DockPanel>
+</Window>
