@@ -35,7 +35,14 @@ namespace Editor
 
   class Engine
   {
+    #region PublicInterface
+    // Public Interface - Methods to be called by GUI
+
+    #endregion
+
     public delegate void UpdateSysMsgText(string msg);
+
+    private TileManager m_tileManager;
 
     public Engine(MainWindow mainWindow)
     {
@@ -45,6 +52,7 @@ namespace Editor
       m_queueThread = new Thread(Run);
       m_queueThread.Name = "Engine Queue Thread";
       m_cmdQueue = new Queue<Command>(0);
+      m_tileManager = new TileManager();
     }
 
     ~Engine()
