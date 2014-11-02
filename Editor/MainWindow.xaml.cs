@@ -188,15 +188,13 @@ namespace Editor
     private void MapLeftClick(object sender, MouseButtonEventArgs e)
     {
       Point loc = e.GetPosition(MapCanvas);
-      Command cmd = Command.CreateMapClickCmd(loc);
-      m_mainEngine.AddCommand(cmd);
+      m_mainEngine.MapClicked(loc);
     }
 
     private void MapRightClick(object sender, MouseButtonEventArgs e)
     {
       Point loc = e.GetPosition(MapCanvas);
-      Command cmd = Command.CreateMapClickCmd(loc, false);
-      m_mainEngine.AddCommand(cmd);
+      m_mainEngine.MapClicked(loc, true);
     }
 
     #endregion

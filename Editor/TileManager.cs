@@ -178,6 +178,10 @@ namespace Editor
       m_nextId = 0;
     }
 
+    /// <summary>
+    /// Create a new TileSheet from the image located at 'filePath'.
+    /// Returns the The ID associated with the new sheet, or -1 on failure.
+    /// </summary>
     public int CreateNewSheet(string filePath, int tileSize)
     {
       int sheetId = m_nextId;

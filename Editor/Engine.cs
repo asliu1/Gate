@@ -8,41 +8,109 @@ using System.Windows;
 
 namespace Editor
 {
-  class Command
-  {
-    public enum Type { NONE, MAP_LEFT_CLICK, MAP_RIGHT_CLICK };
-
-    static public Command CreateMapClickCmd(Point loc, bool leftClick = true)
-    {
-      Command cmd = new Command();
-      cmd.m_type = leftClick ? Type.MAP_LEFT_CLICK : Type.MAP_RIGHT_CLICK;
-      cmd.m_props.Add((int)loc.X);
-      cmd.m_props.Add((int)loc.Y);
-      return cmd;
-    }
-
-    private Command()
-    {
-      m_type = Type.NONE;
-      m_props = new List<int>(0);
-      m_tags = new List<string>(0);
-    }
-
-    public Type m_type;
-    public List<int> m_props;
-    public List<string> m_tags;
-  }
-
   class Engine
   {
     #region PublicInterface
     // Public Interface - Methods to be called by GUI
 
+    public void MapClicked(Point loc, bool rightClick = false)
+    {
+      AddCommand(Command.CreateMapClickCmd(loc, rightClick));
+    }
+
+    public void LoadTileSheet(string filename, int tileSize)
+    {
+      AddCommand(Command.CreateLoadTileSheetCmd(filename, tileSize));
+    }
+
+    public void TileSelected(int sheetID, int tileIndex)
+    {
+      AddCommand(Command.CreateTileSelectedCmd(sheetID, tileIndex));
+    }
+
     #endregion
 
-    public delegate void UpdateSysMsgText(string msg);
+    #region CommandProccessing
+    // Methods to handle all Command types
 
-    private TileManager m_tileManager;
+    private void ProcessCommands()
+    {
+      while (m_cmdQueue.Count() > 0)
+      {
+        Command cmd = m_cmdQueue.Dequeue();
+
+        switch (cmd.m_type)
+        {
+          case Command.Type.NONE:
+            break;
+          case Command.Type.MAP_LEFT_CLICK:
+            MapLeftClicked(cmd.m_props[0], cmd.m_props[1]);
+            break;
+          case Command.Type.MAP_RIGHT_CLICK:
+            MapRightClicked(cmd.m_props[0], cmd.m_props[1]);
+            break;
+          case Command.Type.TILESHEET_LOAD:
+            CreateTileSheet(cmd.m_tags[0], cmd.m_props[0]);
+            break;
+          case Command.Type.TILE_SELECTED:
+            UpdateSelectedTile(cmd.m_props[0], cmd.m_props[1]);
+            break;
+          case Command.Type.MSG_TEXT:
+            DisplayMessage(cmd.m_tags[0]);
+            break;
+          case Command.Type.MSG_POPUP:
+            PopUpMessage(cmd.m_tags[0]);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    private void MapLeftClicked(int xLoc, int yLoc)
+    {
+      int xCord = xLoc / 64;
+      int yCord = yLoc / 64;
+      string msg = String.Format("Map Left Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
+      DisplayMessage(msg);
+    }
+
+    private void MapRightClicked(int xLoc, int yLoc)
+    {
+      int xCord = xLoc / 64;
+      int yCord = yLoc / 64;
+      string msg = String.Format("Map Right Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
+      DisplayMessage(msg);
+    }
+
+    private void CreateTileSheet(string filename, int tileSize)
+    {
+      int sheetID = m_tileManager.CreateNewSheet(filename, tileSize);
+
+      if(sheetID != -1)
+      {
+        // TODO: Call TileModule and Add Sheet to GUI
+      }
+    }
+
+    private void UpdateSelectedTile(int sheetID, int tileIndex)
+    {
+      // TODO
+    }
+
+    private void DisplayMessage(string msg)
+    {
+      m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.UpdateSysMsg(msg); });
+    }
+
+    private void PopUpMessage(string msg)
+    {
+      // TODO
+    }
+
+    #endregion
+
+    #region EngineImplementation
 
     public Engine(MainWindow mainWindow)
     {
@@ -89,7 +157,7 @@ namespace Editor
       m_queueThread.Join();
     }
 
-    public void AddCommand(Command cmd)
+    private void AddCommand(Command cmd)
     {
       lock (m_queueLock)
       {
@@ -99,49 +167,76 @@ namespace Editor
     }
 
     private Engine(ref Engine original) { }
-
-    private void ProcessCommands()
-    {
-      while(m_cmdQueue.Count() > 0)
-      {
-        Command cmd = m_cmdQueue.Dequeue();
-
-        switch (cmd.m_type)
-        {
-          case Command.Type.NONE:
-            break;
-          case Command.Type.MAP_LEFT_CLICK:
-            MapLeftClicked(cmd.m_props[0], cmd.m_props[1]);
-            break;
-          case Command.Type.MAP_RIGHT_CLICK:
-            MapRightClicked(cmd.m_props[0], cmd.m_props[1]);
-            break;
-          default:
-            break;
-        }
-      }
-    }
-
-    private void MapLeftClicked(int xLoc, int yLoc)
-    {
-      int xCord = xLoc / 64;
-      int yCord = yLoc / 64;
-      string msg = String.Format("Map Left Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
-      m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.UpdateSysMsg(msg); });
-    }
-
-    private void MapRightClicked(int xLoc, int yLoc)
-    {
-      int xCord = xLoc / 64;
-      int yCord = yLoc / 64;
-      string msg = String.Format("Map Right Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
-      m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.UpdateSysMsg(msg); });
-    }
-
     private MainWindow m_mainWindow;
     private bool m_running;
     private object m_queueLock;
     private Thread m_queueThread;
     private Queue<Command> m_cmdQueue;
+    private TileManager m_tileManager;
+
+    #endregion
+
+    #region CommandClass
+
+    private class Command
+    {
+      public enum Type { 
+        NONE, 
+        MAP_LEFT_CLICK, 
+        MAP_RIGHT_CLICK,
+        MSG_TEXT,
+        MSG_POPUP,
+        TILESHEET_LOAD,
+        TILE_SELECTED
+      };
+
+      static public Command CreateMapClickCmd(Point loc, bool rightClick)
+      {
+        Command cmd = new Command();
+        cmd.m_type = rightClick ? Type.MAP_RIGHT_CLICK : Type.MAP_LEFT_CLICK;
+        cmd.m_props.Add((int)loc.X);
+        cmd.m_props.Add((int)loc.Y);
+        return cmd;
+      }
+
+      static public Command CreateMsgCmd(string msg, bool popUp = false)
+      {
+        Command cmd = new Command();
+        cmd.m_type = popUp ? Type.MSG_POPUP : Type.MSG_TEXT;
+        cmd.m_tags.Add(msg);
+        return cmd;
+      }
+
+      static public Command CreateLoadTileSheetCmd(string filename, int tileSize)
+      {
+        Command cmd = new Command();
+        cmd.m_type = Type.TILESHEET_LOAD;
+        cmd.m_tags.Add(filename);
+        cmd.m_props.Add(tileSize);
+        return cmd;
+      }
+
+      static public Command CreateTileSelectedCmd(int sheetID, int tileIndex)
+      {
+        Command cmd = new Command();
+        cmd.m_type = Type.TILE_SELECTED;
+        cmd.m_props.Add(sheetID);
+        cmd.m_props.Add(tileIndex);
+        return cmd;
+      }
+
+      private Command()
+      {
+        m_type = Type.NONE;
+        m_props = new List<int>(0);
+        m_tags = new List<string>(0);
+      }
+
+      public Type m_type;
+      public List<int> m_props;
+      public List<string> m_tags;
+    }
+
+    #endregion
   }
 }
