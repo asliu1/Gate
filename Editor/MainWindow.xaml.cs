@@ -131,6 +131,19 @@ namespace Editor
     private void ImportTileSheetClicked(object sender, RoutedEventArgs e)
     {
       UpdateSysMsg("Import Tile Sheet Clicked");
+
+      ImportSheetWindow importWin = new ImportSheetWindow();
+      importWin.Owner = this;
+      importWin.ShowDialog();
+
+      string filename = importWin.GetFileName();
+      int tileSize = importWin.GetTileSize();
+
+      if(filename.Length != 0)
+      {
+        UpdateSysMsg("Importing " + filename + " at " + tileSize.ToString() + " pixels per tile.");
+        // m_mainEngine.LoadTileSheet(filename, tileSize);
+      }
     }
 
     private void ImportTesterClicked(object sender, RoutedEventArgs e)
