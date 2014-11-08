@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -63,15 +64,104 @@ namespace Editor
       // ------------------------------------------------------------------------------------------
     }
 
-    void WindowClosing(object sender, CancelEventArgs e)
+    private void WindowClosing(object sender, CancelEventArgs e)
     {
       m_mainEngine.Stop();
     }
+
+    #region Public API
 
     public void UpdateSysMsg(string msg)
     {
       SysMsgBox.Text = msg;
     }
+
+    public void TileButtonClicked(object sender, MouseButtonEventArgs e)
+    {
+      TileImage button;
+      try
+      {
+        button = (TileImage)sender;
+        m_mainEngine.TileSelected(button.GetSheetID(), button.GetIndex());
+      }
+      catch(InvalidCastException)
+      {
+        return;
+      }
+    }
+
+    public void AddTileSheet(TileSheet sheet)
+    {
+      const int MAX_COLS = 4;
+
+      // Create Grid
+      int numTiles = sheet.GetNumTiles();
+      int numRows = numTiles / MAX_COLS;
+
+      if (numTiles % MAX_COLS > 0)
+      {
+        ++numRows;
+      }
+
+      Grid sheetGrid = new Grid();
+      // Add Rows
+      for(int index = 0; index < numRows; ++index)
+      {
+        RowDefinition row = new RowDefinition();
+        row.Height = GridLength.Auto;
+        sheetGrid.RowDefinitions.Add(row);
+      }
+      // Add Cols
+      for (int index = 0; index < MAX_COLS; ++index)
+      {
+        ColumnDefinition col = new ColumnDefinition();
+        col.Width = GridLength.Auto;
+        sheetGrid.ColumnDefinitions.Add(col);
+      }
+
+      // Add Images
+      int currCol = 0;
+      int currRow = 0;
+
+      Int32Rect srcRect = new Int32Rect(0, 0, TileSheet.TILE_DISPLAY_SIZE, TileSheet.TILE_DISPLAY_SIZE);
+      BitmapSizeOptions opts = BitmapSizeOptions.FromEmptyOptions();
+
+      for(int index = 0; index < numTiles; ++index)
+      {
+        IntPtr srcBits = (sheet.GetTileSourceAt(index));
+        if(srcBits == IntPtr.Zero)
+        {
+          UpdateSysMsg("Error loading Image Source for Sheet: " + sheet.GetFileName() + " Index: " + index.ToString());
+          continue;
+        }
+        var bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(srcBits, IntPtr.Zero, srcRect, opts);
+        TileImage nextImg = new TileImage(sheet.GetID(), index);
+        nextImg.Margin = new Thickness(3);
+        nextImg.Source = bmpSrc;
+        nextImg.MouseLeftButtonUp += TileButtonClicked;
+
+        sheetGrid.Children.Add(nextImg);
+        Grid.SetRow(nextImg, currRow);
+        Grid.SetColumn(nextImg, currCol);
+
+        ++currCol;
+
+        if(currCol >= MAX_COLS)
+        {
+          currCol = 0;
+          ++currRow;
+        }
+      }
+
+      // Create Expander
+      Expander sheetExpander = new Expander();
+      sheetExpander.Header = sheet.GetFileName();
+      sheetExpander.Content = sheetGrid;
+
+      tileStackPanel.Children.Add(sheetExpander);
+    }
+
+    #endregion
 
     #region Menu Methods
 
@@ -142,7 +232,7 @@ namespace Editor
       if(filename.Length != 0)
       {
         UpdateSysMsg("Importing " + filename + " at " + tileSize.ToString() + " pixels per tile.");
-        // m_mainEngine.LoadTileSheet(filename, tileSize);
+        m_mainEngine.LoadTileSheet(filename, tileSize);
       }
     }
 
@@ -211,5 +301,20 @@ namespace Editor
     }
 
     #endregion
+
+    private class TileImage : Image
+    {
+      private int m_sheetID;
+      private int m_index;
+
+      public TileImage(int sheetID, int index) : base()
+      {
+        m_sheetID = sheetID;
+        m_index = index;
+      }
+
+      public int GetSheetID() { return m_sheetID; }
+      public int GetIndex() { return m_index; }
+    }
   }
 }

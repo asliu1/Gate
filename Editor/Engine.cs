@@ -89,13 +89,13 @@ namespace Editor
 
       if(sheetID != -1)
       {
-        // TODO: Call TileModule and Add Sheet to GUI
+        m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.AddTileSheet(m_tileManager.GetSheet(sheetID)); });
       }
     }
 
     private void UpdateSelectedTile(int sheetID, int tileIndex)
     {
-      // TODO
+      DisplayMessage("Tile Selected - SheetID: " + sheetID.ToString() + " Tile Index: " + tileIndex.ToString());
     }
 
     private void DisplayMessage(string msg)

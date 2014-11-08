@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Editor
 {
-  class API { [DllImport("WINGDI32.dll")] public static extern int DeleteObject(IntPtr hObject); }
+  class API { [DllImport("gdi32.dll")] public static extern int DeleteObject(IntPtr hObject); }
 
   public enum SheetError { SUCCESS, UNSUPPORTED, TOO_LARGE, NOT_FOUND, INVALD_ARG, SIZE_MISMATCH };
 
-  class TileSheet
+  public class TileSheet
   {
     public const int TILE_DISPLAY_SIZE = 64;
 
@@ -98,8 +98,17 @@ namespace Editor
       // rightmost and/or bottommost tiles will have the extra space filled
       if(extraWidth > 0 || extraHeight > 0)
       {
-        int wFillBuffer = m_tileSize - extraWidth;
-        int hFillBuffer = m_tileSize - extraHeight;
+        int wFillBuffer = 0;
+        int hFillBuffer = 0;
+
+        if(extraWidth > 0)
+        {
+          wFillBuffer = m_tileSize - extraWidth;
+        }
+        if(extraHeight > 0)
+        {
+          hFillBuffer = m_tileSize - extraHeight;
+        }
 
         bitmap = new Bitmap(srcBitmap.Width + wFillBuffer, srcBitmap.Height + hFillBuffer);
 
@@ -145,7 +154,7 @@ namespace Editor
           gfx.DrawImage(bitmap, destRect, srcRect, units);
           gfx.Dispose();
 
-          m_tileSources.Add(tempMap.GetHbitmap());  // Thi INTPTR will be deleted in the Destructor
+          m_tileSources.Add(tempMap.GetHbitmap());  // The INTPTR will be deleted in the Destructor
         }
       }
     }
@@ -175,6 +184,8 @@ namespace Editor
     
     public TileManager()
     {
+      m_sheets = new List<TileSheet>(0);
+      m_idMap = new SortedDictionary<int, int>();
       m_nextId = 0;
     }
 

@@ -42,7 +42,7 @@
     </Menu>
 
     <!-- Tool Tabs -->
-    <TabControl DockPanel.Dock="Left" Margin="5">
+    <TabControl Width="325" DockPanel.Dock="Left" Margin="5">
       <TabItem Name="TileTab" Header="Tiles">
         <ScrollViewer VerticalScrollBarVisibility="Visible">
           <StackPanel Name="tileStackPanel" Orientation="Vertical"/>
