@@ -6,9 +6,9 @@
         Height="600"
         Closing="WindowClosing">
 
-  <DockPanel>
+  <DockPanel Background="LightGray">
     <!-- Main Menu -->
-    <Menu DockPanel.Dock="Top">
+    <Menu DockPanel.Dock="Top" BorderBrush="Black" BorderThickness="0,0,0,1">
       <MenuItem Header="File">
         <MenuItem Header="New Game Config" Click="NewGameClicked"/>
         <MenuItem Header="Load Game Config" Click="LoadGameClicked"/>
@@ -41,8 +41,27 @@
       </MenuItem>
     </Menu>
 
+    <!-- Tool Tabs -->
+    <TabControl DockPanel.Dock="Left" Margin="5">
+      <TabItem Name="TileTab" Header="Tiles">
+        <ScrollViewer VerticalScrollBarVisibility="Visible">
+          <StackPanel Name="tileStackPanel" Orientation="Vertical"/>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Name="PlaceTab" Header="Placeables">
+        <ScrollViewer VerticalScrollBarVisibility="Visible">
+          <StackPanel Name="placeableStackPanel" Orientation="Vertical"/>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Name="TriggerTab" Header="Trigger">
+        <ScrollViewer VerticalScrollBarVisibility="Visible">
+          <StackPanel Name="triggerStackPanel" Orientation="Vertical"/>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+
     <!-- Define Grid At Bottom of Editor -->
-    <Border DockPanel.Dock="Bottom" Background="LightGray" BorderThickness="0">
+    <Border DockPanel.Dock="Bottom">
       <Grid>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
@@ -65,23 +84,11 @@
           <TextBox Name="SysMsgBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Messages"/>
         </StackPanel>
 
-        <!-- Tool Tabs -->
-        <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" TabStripPlacement="Left" Margin="5">
-          <TabItem Name="TileTab" Header="Tiles">
-
-          </TabItem>
-          <TabItem Name="PlaceTab" Header="Placeables">
-
-          </TabItem>
-          <TabItem Name="TriggerTab" Header="Trigger">
-
-          </TabItem>
-        </TabControl>
       </Grid>
     </Border>
     
     <!-- Map Canvas -->
-    <Border DockPanel.Dock="Bottom" BorderBrush="Black" Background="LightGray" BorderThickness="0,1,0,2">
+    <Border DockPanel.Dock="Bottom">
       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Canvas Name="MapCanvas" Height="2000" Width="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
           <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Map Canvas"/>
