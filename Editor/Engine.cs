@@ -73,6 +73,13 @@ namespace Editor
       int yCord = yLoc / 64;
       string msg = String.Format("Map Left Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
       DisplayMessage(msg);
+
+      // TODO Check Mode
+      if(m_selectedTile.Item1 != -1)
+      {
+        IntPtr src = m_tileManager.GetSheet(m_selectedTile.Item1).GetTileSourceAt(m_selectedTile.Item2);
+        m_renderer.DrawTile(m_selectedTile.Item1, m_selectedTile.Item2, src, xCord, yCord);
+      }
     }
 
     private void MapRightClicked(int xLoc, int yLoc)
@@ -81,6 +88,9 @@ namespace Editor
       int yCord = yLoc / 64;
       string msg = String.Format("Map Right Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
       DisplayMessage(msg);
+
+      // TODO Check Mode
+      m_renderer.ClearTile(xCord, yCord);
     }
 
     private void CreateTileSheet(string filename, int tileSize)
@@ -96,6 +106,7 @@ namespace Editor
     private void UpdateSelectedTile(int sheetID, int tileIndex)
     {
       DisplayMessage("Tile Selected - SheetID: " + sheetID.ToString() + " Tile Index: " + tileIndex.ToString());
+      m_selectedTile = new Tuple<int,int>(sheetID, tileIndex);
     }
 
     private void DisplayMessage(string msg)
@@ -115,12 +126,14 @@ namespace Editor
     public Engine(MainWindow mainWindow)
     {
       m_mainWindow = mainWindow;
+      m_renderer = new Renderer(m_mainWindow, 20, 20);
       m_running = false;
       m_queueLock = new object();
       m_queueThread = new Thread(Run);
       m_queueThread.Name = "Engine Queue Thread";
       m_cmdQueue = new Queue<Command>(0);
       m_tileManager = new TileManager();
+      m_selectedTile = new Tuple<int, int>(-1, -1);
     }
 
     ~Engine()
@@ -128,7 +141,7 @@ namespace Editor
       Stop();
     }
 
-    public void Run()
+    private void Run()
     {
       lock (m_queueLock)
       {
@@ -144,10 +157,12 @@ namespace Editor
     {
       m_running = true;
       m_queueThread.Start();
+      m_renderer.Start();
     }
 
     public void Stop()
     {
+      m_renderer.Stop();
       lock (m_queueLock)  
       {
         m_running = false;
@@ -167,12 +182,14 @@ namespace Editor
     }
 
     private Engine(ref Engine original) { }
+    private Renderer m_renderer;
     private MainWindow m_mainWindow;
     private bool m_running;
     private object m_queueLock;
     private Thread m_queueThread;
     private Queue<Command> m_cmdQueue;
     private TileManager m_tileManager;
+    private Tuple<int, int> m_selectedTile;
 
     #endregion
 

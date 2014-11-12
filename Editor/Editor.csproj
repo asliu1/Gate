@@ -57,6 +57,7 @@
     <Compile Include="ImportSheetWindow.xaml.cs">
       <DependentUpon>ImportSheetWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Renderer.cs" />
     <Compile Include="TileManager.cs" />
     <Page Include="ImportSheetWindow.xaml">
       <SubType>Designer</SubType>

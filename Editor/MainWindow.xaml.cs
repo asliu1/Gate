@@ -31,37 +31,6 @@ namespace Editor
 
       m_mainEngine = new Engine(this);
       m_mainEngine.Start();
-
-      // Map Draw Test Code -----------------------------------------------------------------------
-      int cols = 20;
-      int rows = 10;
-      int gridSize = 64;
-
-      MapCanvas.Height = rows * gridSize;
-      MapCanvas.Width = cols * gridSize;
-      GeometryGroup gridSquares = new GeometryGroup();
-
-      for(int rIndex = 0; rIndex < rows; ++rIndex)
-      {
-        for(int cIndex = 0; cIndex < cols; ++cIndex)
-        {
-          Rect tempRect = new Rect((cIndex * gridSize), (rIndex * gridSize), gridSize, gridSize);
-          gridSquares.Children.Add(new RectangleGeometry(tempRect));
-        }
-      }
-
-      GeometryDrawing grid = new GeometryDrawing();
-      grid.Geometry = gridSquares;
-      grid.Pen = new Pen(Brushes.Black, 1);
-
-      DrawingImage geoImage = new DrawingImage(grid);
-      geoImage.Freeze();
-
-      Image image = new Image();
-      image.Source = geoImage;
-
-      MapCanvas.Children.Add(image);
-      // ------------------------------------------------------------------------------------------
     }
 
     private void WindowClosing(object sender, CancelEventArgs e)
@@ -159,6 +128,28 @@ namespace Editor
       sheetExpander.Content = sheetGrid;
 
       tileStackPanel.Children.Add(sheetExpander);
+    }
+
+    public void DrawMap(IntPtr srcPtr, int width, int height)
+    {
+      // Convert Drawing.Bitmap to Imaging.BitmapSource
+      Int32Rect srcRect = new Int32Rect(0, 0, width, height);
+      BitmapSizeOptions opts = BitmapSizeOptions.FromEmptyOptions();
+      BitmapSource bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(srcPtr, IntPtr.Zero, srcRect, opts);
+
+      if (MapCanvas.Width != width || MapImage.Width != width)
+      {
+        MapCanvas.Width = width;
+        MapImage.Width = width;
+      }
+
+      if (MapCanvas.Height != height || MapImage.Height != height)
+      {
+        MapCanvas.Height = height;
+        MapImage.Height = height;
+      }
+
+      MapImage.Source = bmpSrc;
     }
 
     #endregion

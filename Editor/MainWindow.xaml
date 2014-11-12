@@ -90,8 +90,8 @@
     <!-- Map Canvas -->
     <Border DockPanel.Dock="Bottom">
       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Canvas Name="MapCanvas" Height="2000" Width="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
-          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Map Canvas"/>
+        <Canvas Name="MapCanvas" Width="2000" Height="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
+          <Image Name="MapImage"/>
         </Canvas>
       </ScrollViewer>
     </Border>
