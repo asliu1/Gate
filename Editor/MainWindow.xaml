@@ -44,15 +44,32 @@
     <!-- Tool Tabs -->
     <TabControl Width="325" DockPanel.Dock="Left" Margin="5">
       <TabItem Name="TileTab" Header="Tiles">
-        <ScrollViewer VerticalScrollBarVisibility="Visible">
-          <StackPanel Name="tileStackPanel" Orientation="Vertical"/>
-        </ScrollViewer>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          
+          <Border BorderThickness="0,0,0,1" Margin="0,5,0,5" BorderBrush="DarkGray">
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+              <TextBlock VerticalAlignment="Center" Margin="3,3,20,3" FontSize="16">Brush Preview:</TextBlock>
+              <Border VerticalAlignment="Center" BorderBrush="LightGray" Margin="5" BorderThickness="1">
+                <Image Name="tilePreview" Height="64" Width="64"/>
+              </Border>
+            </StackPanel>
+          </Border>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible">
+            <StackPanel Name="tileStackPanel" Orientation="Vertical"/>
+          </ScrollViewer>
+        </Grid>
       </TabItem>
+      
       <TabItem Name="PlaceTab" Header="Placeables">
         <ScrollViewer VerticalScrollBarVisibility="Visible">
           <StackPanel Name="placeableStackPanel" Orientation="Vertical"/>
         </ScrollViewer>
       </TabItem>
+      
       <TabItem Name="TriggerTab" Header="Trigger">
         <ScrollViewer VerticalScrollBarVisibility="Visible">
           <StackPanel Name="triggerStackPanel" Orientation="Vertical"/>

@@ -51,6 +51,7 @@ namespace Editor
       try
       {
         button = (TileImage)sender;
+        tilePreview.Source = button.Source;
         m_mainEngine.TileSelected(button.GetSheetID(), button.GetIndex());
       }
       catch(InvalidCastException)
