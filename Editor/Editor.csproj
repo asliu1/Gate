@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Command.cs" />
     <Compile Include="ImportSheetWindow.xaml.cs">
       <DependentUpon>ImportSheetWindow.xaml</DependentUpon>
     </Compile>

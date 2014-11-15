@@ -260,7 +260,6 @@ namespace Editor
     private void UpdateMap(Bitmap bmp)
     {
       IntPtr srcPtr = bmp.GetHbitmap();
-
       m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() 
       {
         m_mainWindow.DrawMap(srcPtr, bmp.Width, bmp.Height);

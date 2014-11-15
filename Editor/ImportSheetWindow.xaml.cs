@@ -26,11 +26,12 @@ namespace Editor
 
     private string m_filename;
     private int m_tileSize;
+    private Engine m_engine;
 
-    public ImportSheetWindow()
+    public ImportSheetWindow(Engine mainEngine)
     {
       InitializeComponent();
-
+      m_engine = mainEngine;
       m_filename = "";
       m_tileSize = 0;
 
@@ -67,7 +68,45 @@ namespace Editor
       int index = sizeCombo.SelectedIndex;
       m_tileSize = m_sizes[index];
 
-      this.Close();
+      if (m_filename.Length > 0)
+      {
+        m_engine.LoadTileSheet(m_filename, m_tileSize, ImportCallback);
+      }
+      else
+      {
+        userMsgBox.Text = "Please Select an Image file.";
+      }
+    }
+
+    private void ImportCallback(SheetError err)
+    {
+      // Check Error Code and pass message to user if needed
+      switch (err)
+      {
+        case (SheetError.SUCCESS):
+          this.Close();
+          break;
+        case (SheetError.SIZE_MISMATCH):
+          MessageBox.Show(this, "The tile size does not match image evenly and tiles may contain filler pixels.");
+          this.Close();
+          break;
+        case (SheetError.TOO_LARGE):
+          int max = Int16.MaxValue;
+          userMsgBox.Text = "Selected Image is too large. Max width/height is " + max.ToString() + " pixels.";
+          break;
+        case (SheetError.INVALD_ARG):
+          userMsgBox.Text = "File path is invalid.";
+          break;
+        case (SheetError.NOT_FOUND):
+          userMsgBox.Text = "The requested file was not found.";
+          break;
+        case (SheetError.UNSUPPORTED):
+          userMsgBox.Text = "The requested file type is not supported.";
+          break;
+        default:
+          userMsgBox.Text = "An internal error was encountered, please try again.";
+          break;
+      }
     }
 
     public string GetFileName() { return m_filename; }

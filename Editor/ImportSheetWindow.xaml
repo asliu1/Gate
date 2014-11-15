@@ -19,19 +19,23 @@
       <RowDefinition Height="*"/>
       <RowDefinition Height="*"/>
       <RowDefinition Height="*"/>
+      <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
       
     <!-- File Selection -->
     <TextBlock Text="Filename:" Margin="3" Grid.Column="0" Grid.Row="0"/>
     <TextBox Name="fileNameBox" Width="350" Margin="3" Grid.ColumnSpan="2" Grid.Column="0" Grid.Row="1"/>
     <Button Grid.Column="2" Width="75" Margin="3" Grid.Row="1" Content="Browse" Click="BrowseClicked"/>
+    
+    <!-- User MSG Box -->
+    <TextBlock Name="userMsgBox" Foreground="Red" Margin="10,3,5,10" Grid.Column="0" Grid.Row="3"/>
       
     <!-- TileSize -->
-    <TextBlock Text="Tile Size:" Margin="3" Grid.Column="0" Grid.Row="2"/>
-    <ComboBox Name="sizeCombo" Width="125" Margin="3" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="3"/>
+    <TextBlock Text="Tile Size:" Margin="3" Grid.Column="0" Grid.Row="4"/>
+    <ComboBox Name="sizeCombo" Width="125" Margin="3" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="5"/>
       
     <!-- Option Buttons -->
-    <Button Grid.Column="2" Width="75" Margin="3" Grid.Row="5" Content="Cancel" IsCancel="True"/>
-    <Button Grid.Column="2" Width="75" Margin="3" Grid.Row="4" Content="Import" IsDefault="True" Click="ImportClicked"/>
+    <Button Grid.Column="2" Width="75" Margin="3" Grid.Row="6" Content="Cancel" IsCancel="True"/>
+    <Button Grid.Column="2" Width="75" Margin="3" Grid.Row="5" Content="Import" IsDefault="True" Click="ImportClicked"/>
   </Grid>
 </Window>

@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Editor
 {
-  class Engine
+  public class Engine
   {
     #region PublicInterface
     // Public Interface - Methods to be called by GUI
@@ -18,9 +18,9 @@ namespace Editor
       AddCommand(Command.CreateMapClickCmd(loc, rightClick));
     }
 
-    public void LoadTileSheet(string filename, int tileSize)
+    public void LoadTileSheet(string filename, int tileSize, Command.ImportCallBack cBack)
     {
-      AddCommand(Command.CreateLoadTileSheetCmd(filename, tileSize));
+      AddCommand(Command.CreateLoadTileSheetCmd(filename, tileSize, cBack));
     }
 
     public void TileSelected(int sheetID, int tileIndex)
@@ -50,7 +50,7 @@ namespace Editor
             MapRightClicked(cmd.m_props[0], cmd.m_props[1]);
             break;
           case Command.Type.TILESHEET_LOAD:
-            CreateTileSheet(cmd.m_tags[0], cmd.m_props[0]);
+            CreateTileSheet(cmd);
             break;
           case Command.Type.TILE_SELECTED:
             UpdateSelectedTile(cmd.m_props[0], cmd.m_props[1]);
@@ -93,14 +93,23 @@ namespace Editor
       m_renderer.ClearTile(xCord, yCord);
     }
 
-    private void CreateTileSheet(string filename, int tileSize)
+    private void CreateTileSheet(Command command)
     {
-      int sheetID = m_tileManager.CreateNewSheet(filename, tileSize);
-
-      if(sheetID != -1)
+      try
       {
-        m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.AddTileSheet(m_tileManager.GetSheet(sheetID)); });
+        ImportSheetCommand cmd = (ImportSheetCommand)command;
+        int sheetID = 0;
+        SheetError err = m_tileManager.CreateNewSheet(cmd.m_filename, cmd.m_tileSize, ref sheetID);
+
+        // Check Error - SIZE_MISMATCH is considered okay for now
+        if ((err == SheetError.SUCCESS || err == SheetError.SIZE_MISMATCH) && sheetID != -1)
+        {
+          m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.AddTileSheet(m_tileManager.GetSheet(sheetID)); });
+          DisplayMessage("Importing " + cmd.m_filename + " at " + cmd.m_tileSize.ToString() + " pixels per tile.");
+        }
+        m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { cmd.m_callBack(err); });
       }
+      catch (InvalidCastException){/*Add Logging in Future for Internal Error*/}
     }
 
     private void UpdateSelectedTile(int sheetID, int tileIndex)
@@ -193,67 +202,5 @@ namespace Editor
 
     #endregion
 
-    #region CommandClass
-
-    private class Command
-    {
-      public enum Type { 
-        NONE, 
-        MAP_LEFT_CLICK, 
-        MAP_RIGHT_CLICK,
-        MSG_TEXT,
-        MSG_POPUP,
-        TILESHEET_LOAD,
-        TILE_SELECTED
-      };
-
-      static public Command CreateMapClickCmd(Point loc, bool rightClick)
-      {
-        Command cmd = new Command();
-        cmd.m_type = rightClick ? Type.MAP_RIGHT_CLICK : Type.MAP_LEFT_CLICK;
-        cmd.m_props.Add((int)loc.X);
-        cmd.m_props.Add((int)loc.Y);
-        return cmd;
-      }
-
-      static public Command CreateMsgCmd(string msg, bool popUp = false)
-      {
-        Command cmd = new Command();
-        cmd.m_type = popUp ? Type.MSG_POPUP : Type.MSG_TEXT;
-        cmd.m_tags.Add(msg);
-        return cmd;
-      }
-
-      static public Command CreateLoadTileSheetCmd(string filename, int tileSize)
-      {
-        Command cmd = new Command();
-        cmd.m_type = Type.TILESHEET_LOAD;
-        cmd.m_tags.Add(filename);
-        cmd.m_props.Add(tileSize);
-        return cmd;
-      }
-
-      static public Command CreateTileSelectedCmd(int sheetID, int tileIndex)
-      {
-        Command cmd = new Command();
-        cmd.m_type = Type.TILE_SELECTED;
-        cmd.m_props.Add(sheetID);
-        cmd.m_props.Add(tileIndex);
-        return cmd;
-      }
-
-      private Command()
-      {
-        m_type = Type.NONE;
-        m_props = new List<int>(0);
-        m_tags = new List<string>(0);
-      }
-
-      public Type m_type;
-      public List<int> m_props;
-      public List<string> m_tags;
-    }
-
-    #endregion
   }
 }

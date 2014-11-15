@@ -29,6 +29,14 @@ namespace Editor
     /// </summary>
     public TileSheet(string filePath, int tileSize, int id)
     {
+      m_tileSources = new List<IntPtr>(0);
+
+      if(!File.Exists(filePath))
+      {
+        m_error = SheetError.NOT_FOUND;
+        return;
+      }
+
       // Strip path from filename
       try
       {
@@ -59,13 +67,16 @@ namespace Editor
       {
         m_error = SheetError.NOT_FOUND;
       }
+      catch(System.ArgumentException)
+      {
+        m_error = SheetError.INVALD_ARG;
+      }
 
       // Image Loaded, prepare sheet for use
       if(m_error == SheetError.SUCCESS)
       {
         m_tileSize = tileSize;
         m_id = id;
-        m_tileSources = new List<IntPtr>(0);
         CreateTiles(bitmap);
         bitmap.Dispose();
       }
@@ -193,42 +204,25 @@ namespace Editor
     /// Create a new TileSheet from the image located at 'filePath'.
     /// Returns the The ID associated with the new sheet, or -1 on failure.
     /// </summary>
-    public int CreateNewSheet(string filePath, int tileSize)
+    public SheetError CreateNewSheet(string filePath, int tileSize, ref int sheetID)
     {
-      int sheetId = m_nextId;
-      TileSheet newSheet = new TileSheet(filePath, tileSize, sheetId);
+      TileSheet newSheet = new TileSheet(filePath, tileSize, m_nextId);
 
       // Check Error Code and pass message to user if needed
-      switch(newSheet.GetError())
+      SheetError err = newSheet.GetError();
+      if(err == SheetError.SUCCESS || err == SheetError.SIZE_MISMATCH)
       {
-        case(SheetError.SUCCESS):
-          m_sheets.Add(newSheet);
-          m_idMap.Add(sheetId, m_sheets.Count - 1);  // Map the ID to the index
-          ++m_nextId; 
-          break;
-        case (SheetError.SIZE_MISMATCH):
-          m_sheets.Add(newSheet);
-          m_idMap.Add(sheetId, m_sheets.Count - 1);  // Map the ID to the index
-          ++m_nextId; 
-          break;
-        case (SheetError.TOO_LARGE):
-          sheetId = -1;
-          break;
-        case (SheetError.INVALD_ARG):
-          sheetId = -1;
-          break;
-        case (SheetError.NOT_FOUND):
-          sheetId = -1;
-          break;
-        case (SheetError.UNSUPPORTED):
-          sheetId = -1;
-          break;
-        default:
-          sheetId = -1;
-          break;
+        m_sheets.Add(newSheet);
+        m_idMap.Add(m_nextId, m_sheets.Count - 1);  // Map the ID to the index
+        sheetID = m_nextId;
+        ++m_nextId; 
+      }
+      else
+      {
+        sheetID = -1;
       }
 
-      return sheetId;
+      return err;
     }
 
     /// <summary>
