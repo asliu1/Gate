@@ -151,6 +151,7 @@ namespace Editor
       }
 
       MapImage.Source = bmpSrc;
+      GC.Collect();
     }
 
     #endregion
