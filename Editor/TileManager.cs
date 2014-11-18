@@ -187,9 +187,9 @@ namespace Editor
     public SheetError GetError() { return m_error; }
   }
 
-  class TileManager
+  public class TileManager
   {
-    private List<TileSheet> m_sheets;
+    public List<TileSheet> m_sheets;
     private SortedDictionary<int, int> m_idMap;
     private int m_nextId;
     

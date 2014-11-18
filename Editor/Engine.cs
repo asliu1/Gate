@@ -190,6 +190,11 @@ namespace Editor
       }
     }
 
+    public TileManager getTileManager()
+    {
+        return m_tileManager;
+    }
+
     private Engine(ref Engine original) { }
     private Renderer m_renderer;
     private MainWindow m_mainWindow;
