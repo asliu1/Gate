@@ -208,6 +208,7 @@ namespace Editor
             for (int i = 0; i < ts.GetNumTiles(); ++i)
             {
                 itslate.Append(ts.GetTileSourceAt(i).ToString());
+
             }
             File.WriteAllText("test.txt", itslate.ToString());
         }
