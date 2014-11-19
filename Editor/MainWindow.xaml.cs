@@ -266,6 +266,20 @@ namespace Editor
       UpdateSysMsg("Help Clicked");
     }
 
+    private void NewPlaceableClicked(object sender, RoutedEventArgs e)
+    {
+        NewPlaceableWindow newPlaceWin = new NewPlaceableWindow(m_mainEngine);
+        newPlaceWin.Owner = this;
+        newPlaceWin.ShowDialog();
+    }
+
+    private void NewComponentClicked(object sender, RoutedEventArgs e)
+    {
+        NewComponentWindow newCompWin = new NewComponentWindow(m_mainEngine);
+        newCompWin.Owner = this;
+        newCompWin.ShowDialog();
+    }
+
     #endregion
 
     #region Map Clicks
