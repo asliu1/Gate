@@ -6,112 +6,124 @@
         Height="600"
         Closing="WindowClosing">
 
-  <DockPanel Background="LightGray">
-    <!-- Main Menu -->
-    <Menu DockPanel.Dock="Top" BorderBrush="Black" BorderThickness="0,0,0,1">
-      <MenuItem Header="File">
-        <MenuItem Header="New Game Config" Click="NewGameClicked"/>
-        <MenuItem Header="Load Game Config" Click="LoadGameClicked"/>
-        <MenuItem Header="Save Game Config" Click="SaveGameClicked"/>
-        <MenuItem Header="Save Game Config As" Click="SaveGameAsClicked"/>
-        <MenuItem Header="Exit" Click="ExitClicked"/>
-      </MenuItem>
-      <MenuItem Header="Level">
-        <MenuItem Header="New Level" Click="NewLevelClicked"/>
-        <MenuItem Header="Load Level" Click="LoadLevelClicked"/>
-        <MenuItem Header="Save Level" Click="SaveLevelClicked"/>
-        <MenuItem Header="Save Level As" Click="SaveLevelAsClicked"/>
-      </MenuItem>
-      <MenuItem Header="Tools">
-        <MenuItem Header="Import Components" Click="ImportComponentsClicked"/>
-        <MenuItem Header="Import TileSheet" Click="ImportTileSheetClicked"/>
-        <MenuItem Header="Import Tester" Click="ImportTesterClicked"/>
-        <MenuItem Header="Create Prototype" Click="CreatePrototypeClicked"/>
-      </MenuItem>
-      <MenuItem Header="View">
-        <MenuItem Header="Show Config Data" Click="ShowConfigClicked"/>
-        <MenuItem Header="Show Tools Panel" Click="ShowToolsClicked"/>
-        <MenuItem Header="Show Hints Panel" Click="ShowHintsClicked"/>
-        <MenuItem Header="Show Message Panel" Click="ShowMessagesClicked"/>
-        <MenuItem Header="Show Undo/Redo Queues" Click="ShowActionQueuesClicked"/>
-      </MenuItem>
-      <MenuItem Header="Test" Click="TestClicked">
-      </MenuItem>
-      <MenuItem Header="Help" Click="HelpClicked">
-      </MenuItem>
-    </Menu>
+    <DockPanel Background="LightGray">
+        <!-- Main Menu -->
+        <Menu DockPanel.Dock="Top" BorderBrush="Black" BorderThickness="0,0,0,1">
+            <MenuItem Header="File">
+                <MenuItem Header="New Game Config" Click="NewGameClicked"/>
+                <MenuItem Header="Load Game Config" Click="LoadGameClicked"/>
+                <MenuItem Header="Save Game Config" Click="SaveGameClicked"/>
+                <MenuItem Header="Save Game Config As" Click="SaveGameAsClicked"/>
+                <MenuItem Header="Exit" Click="ExitClicked"/>
+            </MenuItem>
+            <MenuItem Header="Level">
+                <MenuItem Header="New Level" Click="NewLevelClicked"/>
+                <MenuItem Header="Load Level" Click="LoadLevelClicked"/>
+                <MenuItem Header="Save Level" Click="SaveLevelClicked"/>
+                <MenuItem Header="Save Level As" Click="SaveLevelAsClicked"/>
+            </MenuItem>
+            <MenuItem Header="Tools">
+                <MenuItem Header="Import Components" Click="ImportComponentsClicked"/>
+                <MenuItem Header="Import TileSheet" Click="ImportTileSheetClicked"/>
+                <MenuItem Header="Import Tester" Click="ImportTesterClicked"/>
+                <MenuItem Header="Create Prototype" Click="CreatePrototypeClicked"/>
+            </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Show Config Data" Click="ShowConfigClicked"/>
+                <MenuItem Header="Show Tools Panel" Click="ShowToolsClicked"/>
+                <MenuItem Header="Show Hints Panel" Click="ShowHintsClicked"/>
+                <MenuItem Header="Show Message Panel" Click="ShowMessagesClicked"/>
+                <MenuItem Header="Show Undo/Redo Queues" Click="ShowActionQueuesClicked"/>
+            </MenuItem>
+            <MenuItem Header="Test" Click="TestClicked">
+            </MenuItem>
+            <MenuItem Header="Help" Click="HelpClicked">
+            </MenuItem>
+        </Menu>
 
-    <!-- Tool Tabs -->
-    <TabControl Width="325" DockPanel.Dock="Left" Margin="5">
-      <TabItem Name="TileTab" Header="Tiles">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-          </Grid.RowDefinitions>
-          
-          <Border BorderThickness="0,0,0,1" Margin="0,5,0,5" BorderBrush="DarkGray">
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-              <TextBlock VerticalAlignment="Center" Margin="3,3,20,3" FontSize="16">Brush Preview:</TextBlock>
-              <Border VerticalAlignment="Center" BorderBrush="LightGray" Margin="5" BorderThickness="1">
-                <Image Name="tilePreview" Height="64" Width="64"/>
-              </Border>
-            </StackPanel>
-          </Border>
-          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible">
-            <StackPanel Name="tileStackPanel" Orientation="Vertical"/>
-          </ScrollViewer>
-        </Grid>
-      </TabItem>
-      
-      <TabItem Name="PlaceTab" Header="Placeables">
-        <ScrollViewer VerticalScrollBarVisibility="Visible">
-          <StackPanel Name="placeableStackPanel" Orientation="Vertical"/>
-        </ScrollViewer>
-      </TabItem>
-      
-      <TabItem Name="TriggerTab" Header="Trigger">
-        <ScrollViewer VerticalScrollBarVisibility="Visible">
-          <StackPanel Name="triggerStackPanel" Orientation="Vertical"/>
-        </ScrollViewer>
-      </TabItem>
-    </TabControl>
+        <!-- Tool Tabs -->
+        <TabControl Width="325" DockPanel.Dock="Left" Margin="5">
+            <TabItem Name="TileTab" Header="Tiles">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-    <!-- Define Grid At Bottom of Editor -->
-    <Border DockPanel.Dock="Bottom">
-      <Grid>
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition Height="auto"/>
-          <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+                    <Border BorderThickness="0,0,0,1" Margin="0,5,0,5" BorderBrush="DarkGray">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" Margin="3,3,20,3" FontSize="16">Brush Preview:</TextBlock>
+                            <Border VerticalAlignment="Center" BorderBrush="LightGray" Margin="5" BorderThickness="1">
+                                <Image Name="tilePreview" Height="64" Width="64"/>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Visible">
+                        <StackPanel Name="tileStackPanel" Orientation="Vertical"/>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
 
-        <!-- Guide Box -->
-        <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
-          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Guide" Margin="0,0,0,3"/>
-          <TextBox Name="GuideBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Editing Hints"/>
-        </StackPanel>
+            <TabItem Name="PlaceTab" Header="Placeables">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Click="NewPlaceableClicked" Grid.Row="0" Grid.Column="0" Content="New Placeable"/>
+                    <Button Click="NewComponentClicked" Grid.Row="0" Grid.Column="1" Content="New Component"/>
+                    <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" Margin="0,5,0,10">
+                        <StackPanel Name="placeablesPanel" Orientation="Vertical"/>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
 
-        <!-- System Message Box -->
-        <StackPanel Grid.Column="1" Grid.Row="0" Margin="5">
-          <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="System Messages" Margin="0,0,0,3"/>
-          <TextBox Name="SysMsgBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Messages"/>
-        </StackPanel>
+            <TabItem Name="TriggerTab" Header="Trigger">
+                <ScrollViewer VerticalScrollBarVisibility="Visible">
+                    <StackPanel Name="triggerStackPanel" Orientation="Vertical"/>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
 
-      </Grid>
-    </Border>
-    
-    <!-- Map Canvas -->
-    <Border DockPanel.Dock="Bottom">
-      <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Canvas Name="MapCanvas" Width="2000" Height="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
-          <Image Name="MapImage"/>
-        </Canvas>
-      </ScrollViewer>
-    </Border>
+        <!-- Define Grid At Bottom of Editor -->
+        <Border DockPanel.Dock="Bottom">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-  </DockPanel>
+                <!-- Guide Box -->
+                <StackPanel Grid.Column="0" Grid.Row="0" Margin="5">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Guide" Margin="0,0,0,3"/>
+                    <TextBox Name="GuideBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Editing Hints"/>
+                </StackPanel>
+
+                <!-- System Message Box -->
+                <StackPanel Grid.Column="1" Grid.Row="0" Margin="5">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="System Messages" Margin="0,0,0,3"/>
+                    <TextBox Name="SysMsgBox" IsEnabled="False" Height="75" TextWrapping="Wrap" Text="Messages"/>
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <!-- Map Canvas -->
+        <Border DockPanel.Dock="Bottom">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Canvas Name="MapCanvas" Width="2000" Height="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
+                    <Image Name="MapImage"/>
+                </Canvas>
+            </ScrollViewer>
+        </Border>
+
+    </DockPanel>
 </Window>
