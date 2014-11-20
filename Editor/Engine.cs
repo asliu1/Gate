@@ -44,22 +44,22 @@ namespace Editor
           case Command.Type.NONE:
             break;
           case Command.Type.MAP_LEFT_CLICK:
-            MapLeftClicked(cmd.m_props[0], cmd.m_props[1]);
+            MapLeftClicked(cmd);
             break;
           case Command.Type.MAP_RIGHT_CLICK:
-            MapRightClicked(cmd.m_props[0], cmd.m_props[1]);
+            MapRightClicked(cmd);
             break;
           case Command.Type.TILESHEET_LOAD:
             CreateTileSheet(cmd);
             break;
           case Command.Type.TILE_SELECTED:
-            UpdateSelectedTile(cmd.m_props[0], cmd.m_props[1]);
+            UpdateSelectedTile(cmd);
             break;
           case Command.Type.MSG_TEXT:
-            DisplayMessage(cmd.m_tags[0]);
+            DisplayMessage(cmd);
             break;
           case Command.Type.MSG_POPUP:
-            PopUpMessage(cmd.m_tags[0]);
+            PopUpMessage(cmd);
             break;
           default:
             break;
@@ -67,30 +67,41 @@ namespace Editor
       }
     }
 
-    private void MapLeftClicked(int xLoc, int yLoc)
+    private void MapLeftClicked(Command command)
     {
-      int xCord = xLoc / 64;
-      int yCord = yLoc / 64;
-      string msg = String.Format("Map Left Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
-      DisplayMessage(msg);
-
-      // TODO Check Mode
-      if(m_selectedTile.Item1 != -1)
+      try
       {
-        IntPtr src = m_tileManager.GetSheet(m_selectedTile.Item1).GetTileSourceAt(m_selectedTile.Item2);
-        m_renderer.DrawTile(m_selectedTile.Item1, m_selectedTile.Item2, src, xCord, yCord);
+        MapClickCommand cmd = (MapClickCommand)command;
+
+        int xCord = (int)cmd.m_loc.X / 64;
+        int yCord = (int)cmd.m_loc.Y / 64;
+        string msg = String.Format("Map Left Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", cmd.m_loc.X, cmd.m_loc.Y, xCord, yCord);
+        DisplayMessage(msg);
+
+        // TODO Check Mode
+        if (m_selectedTile.Item1 != -1)
+        {
+          IntPtr src = m_tileManager.GetSheet(m_selectedTile.Item1).GetTileSourceAt(m_selectedTile.Item2);
+          m_renderer.DrawTile(m_selectedTile.Item1, m_selectedTile.Item2, src, xCord, yCord);
+        }
       }
+      catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
     }
 
-    private void MapRightClicked(int xLoc, int yLoc)
+    private void MapRightClicked(Command command)
     {
-      int xCord = xLoc / 64;
-      int yCord = yLoc / 64;
-      string msg = String.Format("Map Right Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", xLoc, yLoc, xCord, yCord);
-      DisplayMessage(msg);
+      try
+      {
+        MapClickCommand cmd = (MapClickCommand)command;
+        int xCord = (int)cmd.m_loc.X / 64;
+        int yCord = (int)cmd.m_loc.Y / 64;
+        string msg = String.Format("Map Right Clicked at ({0}, {1}) grid evaluates to ({2}, {3}).", cmd.m_loc.X, cmd.m_loc.Y, xCord, yCord);
+        DisplayMessage(msg);
 
-      // TODO Check Mode
-      m_renderer.ClearTile(xCord, yCord);
+        // TODO Check Mode
+        m_renderer.ClearTile(xCord, yCord);
+      }
+      catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
     }
 
     private void CreateTileSheet(Command command)
@@ -112,15 +123,39 @@ namespace Editor
       catch (InvalidCastException){/*Add Logging in Future for Internal Error*/}
     }
 
-    private void UpdateSelectedTile(int sheetID, int tileIndex)
+    private void UpdateSelectedTile(Command command)
     {
-      DisplayMessage("Tile Selected - SheetID: " + sheetID.ToString() + " Tile Index: " + tileIndex.ToString());
-      m_selectedTile = new Tuple<int,int>(sheetID, tileIndex);
+      try
+      {
+        TileSelectCommand cmd = (TileSelectCommand)command;
+        DisplayMessage("Tile Selected - SheetID: " + cmd.m_sheetID.ToString() + " Tile Index: " + cmd.m_tileIndex.ToString());
+        m_selectedTile = new Tuple<int, int>(cmd.m_sheetID, cmd.m_tileIndex);
+      }
+      catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
+    }
+
+    private void DisplayMessage(Command command)
+    {
+      try
+      {
+        MessageCommand cmd = (MessageCommand)command;
+        m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.UpdateSysMsg(cmd.m_msg); });
+      }
+      catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
     }
 
     private void DisplayMessage(string msg)
     {
       m_mainWindow.Dispatcher.InvokeAsync((Action)delegate() { m_mainWindow.UpdateSysMsg(msg); });
+    }
+
+    private void PopUpMessage(Command command)
+    {
+      try
+      {
+        // TODO
+      }
+      catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
     }
 
     private void PopUpMessage(string msg)
