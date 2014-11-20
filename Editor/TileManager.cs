@@ -69,7 +69,7 @@ namespace Editor
       }
       catch(System.ArgumentException)
       {
-        m_error = SheetError.INVALD_ARG;
+        m_error = SheetError.UNSUPPORTED;
       }
 
       // Image Loaded, prepare sheet for use
