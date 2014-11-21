@@ -11,9 +11,75 @@ namespace Editor
   using BitmapCache = Dictionary<Tuple<int, int>, Renderer.CacheEntry>;
   using CacheKey = Tuple<int, int>;
 
+  public class GridSquare
+  {
+    public int m_sheetID;
+    public int m_tileIndex;
+    public bool m_hasPlaceable;
+    public bool m_hasTrigger;
+    /*
+     * Will Contain Data for Placeables/Triggers
+     * public Placeable m_place;
+     * public Trigger m_trigger;
+     */
+
+    public GridSquare()
+    {
+      m_sheetID = -1;
+      m_tileIndex = -1;
+      m_hasPlaceable = false;
+      m_hasTrigger = false;
+    }
+  }
+
+  public abstract class Delta
+  {
+    public int m_index;
+
+    static public Delta CreateTileDelta(int index, int sheetID, int tileIndex)
+    {
+      return new TileDelta(index, sheetID, tileIndex);
+    }
+
+    public abstract void Apply(GridSquare grid);
+  }
+
+  class TileDelta : Delta
+  {
+    public int m_sheetID;
+    public int m_tileIndex;
+
+    public TileDelta(int index, int sheetID, int tileIndex)
+    {
+      m_index = index;
+      m_sheetID = sheetID;
+      m_tileIndex = tileIndex;
+    }
+
+    override public void Apply(GridSquare grid)
+    {
+      grid.m_sheetID = m_sheetID;
+      grid.m_tileIndex = m_tileIndex;
+    }
+  }
+
+  class PlaceableDelta : Delta
+  {
+    override public void Apply(GridSquare grid)
+    {
+    }
+  }
+
+  class TriggerDelta : Delta
+  {
+    override public void Apply(GridSquare grid)
+    {
+    }
+  }
+
   class Renderer
   {
-    #region Structures
+    #region Classes
 
     public struct CacheEntry
     {
@@ -27,30 +93,12 @@ namespace Editor
       }
     }
 
-    class MapTile
-    {
-      public int m_sheetID;
-      public int m_tileIndex;
-
-      public MapTile()
-      {
-        m_sheetID = -1;
-        m_tileIndex = -1;
-      }
-
-      public MapTile(int sheetID, int tileIndex)
-      {
-        m_sheetID = sheetID;
-        m_tileIndex = tileIndex;
-      }
-    }
-
     #endregion
 
     #region Core
 
     private BitmapCache m_cache;
-    private List<MapTile> m_tiles;
+    private List<GridSquare> m_grid;
     private Point m_mapSize;
     private bool m_running = false;
     private Thread m_renderThread;
@@ -63,10 +111,10 @@ namespace Editor
       m_mapSize.X = numCols;
       m_mapSize.Y = numRows;
       m_cache = new BitmapCache();
-      m_tiles = new List<MapTile>();
+      m_grid = new List<GridSquare>();
       for (int index = 0; index < numCols * numRows; ++index)
       {
-        m_tiles.Add(new MapTile());
+        m_grid.Add(new GridSquare());
       }
       m_running = false;
       m_renderThread = new Thread(Run);
@@ -133,9 +181,9 @@ namespace Editor
     {
       lock (m_renderLock)
       {
-        MapTile tile = m_tiles[xCord + (m_mapSize.X * yCord)];
+        GridSquare gridS = m_grid[xCord + (m_mapSize.X * yCord)];
 
-        if (tile.m_sheetID == sheet && tile.m_tileIndex == tileIndex)
+        if (gridS.m_sheetID == sheet && gridS.m_tileIndex == tileIndex)
         {
           // No Change
           return;
@@ -153,8 +201,8 @@ namespace Editor
         }
 
         // Assign Values to Tile
-        tile.m_sheetID = sheet;
-        tile.m_tileIndex = tileIndex;
+        gridS.m_sheetID = sheet;
+        gridS.m_tileIndex = tileIndex;
 
         Monitor.Pulse(m_renderLock);
       }
@@ -164,16 +212,16 @@ namespace Editor
     {
       lock (m_renderLock)
       {
-        MapTile tile = m_tiles[xCord + (m_mapSize.X * yCord)];
+        GridSquare gridS = m_grid[xCord + (m_mapSize.X * yCord)];
 
-        if(tile.m_sheetID == -1)
+        if (gridS.m_sheetID == -1)
         {
           // No Change
           return;
         }
 
         // Decrement Cache Count
-        CacheKey key = new CacheKey(tile.m_sheetID, tile.m_tileIndex);
+        CacheKey key = new CacheKey(gridS.m_sheetID, gridS.m_tileIndex);
         if (m_cache.ContainsKey(key))
         {
           m_cache[key] = new CacheEntry(m_cache[key].m_bitmap, m_cache[key].m_count - 1);
@@ -185,7 +233,7 @@ namespace Editor
           }
         }
 
-        tile.m_sheetID = -1;
+        gridS.m_sheetID = -1;
 
         Monitor.Pulse(m_renderLock);
       }
@@ -217,11 +265,11 @@ namespace Editor
       Rectangle srcRect = new Rectangle(0, 0, tileSize, tileSize);
       Pen pen = new Pen(Color.Black, 1);
       // Loop through Tile Array and Draw Tiles
-      foreach(MapTile tile in m_tiles)
+      foreach(GridSquare square in m_grid)
       {
         Rectangle destRect = new Rectangle(col * tileSize, row * tileSize, tileSize, tileSize);
 
-        if(tile.m_sheetID == -1)
+        if (square.m_sheetID == -1)
         {
           // Draw Grid Square
           gfx.DrawRectangle(pen, destRect);
@@ -229,7 +277,7 @@ namespace Editor
         else
         {
           // Draw Bitmap
-          CacheKey key = new CacheKey(tile.m_sheetID, tile.m_tileIndex);
+          CacheKey key = new CacheKey(square.m_sheetID, square.m_tileIndex);
           if (m_cache.ContainsKey(key))
           {
             Bitmap tempBmp = m_cache[key].m_bitmap;
