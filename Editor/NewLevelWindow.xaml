@@ -1,0 +1,41 @@
+﻿<Window x:Class="Editor.NewLevelWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="New Level"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- File Selection -->
+    <TextBlock Text="Level Name:" Margin="3" Grid.Column="0" Grid.Row="0"/>
+    <TextBox Name="levelNameBox" HorizontalAlignment="Left" Width="175" Margin="3" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+
+    <!-- Grid Size -->
+    <TextBlock Text="Columns (1-50)" Margin="3" Grid.Column="0" Grid.Row="2"/>
+    <TextBox Name="colBox" PreviewTextInput="TestInput" Margin="3" Grid.Column="1" Grid.Row="2"/>
+
+    <TextBlock Text="Rows (1-50)" Margin="3" Grid.Column="0" Grid.Row="3"/>
+    <TextBox Name="rowBox" PreviewTextInput="TestInput" Margin="3" Grid.Column="1" Grid.Row="3"/>
+
+    <!-- User MSG Box -->
+    <TextBlock HorizontalAlignment="Left" Name="userMsgBox" Grid.ColumnSpan="2" Foreground="Red" Margin="10,3,5,10" Grid.Column="0" Grid.Row="4"/>
+
+    <!-- Option Buttons -->
+    <Button Grid.Column="2" Width="75" Margin="20,3,3,3" Grid.Row="3" Content="Create" IsDefault="True" Click="CreateClicked"/>
+    <Button Grid.Column="2" Width="75" Margin="20,3,3,3" Grid.Row="4" Content="Cancel" IsCancel="True"/>
+  </Grid>
+</Window>

@@ -36,9 +36,9 @@ namespace Editor
   {
     public int m_index;
 
-    static public Delta CreateTileDelta(int index, int sheetID, int tileIndex)
+    static public Delta CreateTileDelta(int index, Tile tile)
     {
-      return new TileDelta(index, sheetID, tileIndex);
+      return new TileDelta(index, tile);
     }
 
     public abstract void Apply(GridSquare grid);
@@ -49,11 +49,11 @@ namespace Editor
     public int m_sheetID;
     public int m_tileIndex;
 
-    public TileDelta(int index, int sheetID, int tileIndex)
+    public TileDelta(int index, Tile tile)
     {
       m_index = index;
-      m_sheetID = sheetID;
-      m_tileIndex = tileIndex;
+      m_sheetID = tile.m_sheetID;
+      m_tileIndex = tile.m_tileIndex;
     }
 
     override public void Apply(GridSquare grid)

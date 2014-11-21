@@ -187,7 +187,9 @@ namespace Editor
     // Level
     private void NewLevelClicked(object sender, RoutedEventArgs e)
     {
-      UpdateSysMsg("New Level Clicked");
+      NewLevelWindow importWin = new NewLevelWindow(m_mainEngine);
+      importWin.Owner = this;
+      importWin.ShowDialog();
     }
 
     private void LoadLevelClicked(object sender, RoutedEventArgs e)

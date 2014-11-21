@@ -58,6 +58,10 @@
     <Compile Include="ImportSheetWindow.xaml.cs">
       <DependentUpon>ImportSheetWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Level.cs" />
+    <Compile Include="NewLevelWindow.xaml.cs">
+      <DependentUpon>NewLevelWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Renderer.cs" />
     <Compile Include="TileManager.cs" />
     <Page Include="ImportSheetWindow.xaml">
@@ -77,6 +81,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NewLevelWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
