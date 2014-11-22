@@ -108,7 +108,6 @@
     <Border DockPanel.Dock="Bottom">
       <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Canvas Name="MapCanvas" Width="2000" Height="2000" Margin="10" Background="White" MouseLeftButtonDown="MapLeftClick" MouseRightButtonDown="MapRightClick">
-          <Image Name="MapImage"/>
         </Canvas>
       </ScrollViewer>
     </Border>

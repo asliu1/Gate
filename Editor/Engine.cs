@@ -81,8 +81,7 @@ namespace Editor
         // TODO Check Mode
         if (m_selectedTile.Item1 != -1)
         {
-          IntPtr src = m_tileManager.GetSheet(m_selectedTile.Item1).GetTileSourceAt(m_selectedTile.Item2);
-          m_renderer.DrawTile(m_selectedTile.Item1, m_selectedTile.Item2, src, xCord, yCord);
+          m_renderer.DrawTile(m_selectedTile.Item1, m_selectedTile.Item2, xCord, yCord);
         }
       }
       catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
@@ -170,13 +169,13 @@ namespace Editor
     public Engine(MainWindow mainWindow)
     {
       m_mainWindow = mainWindow;
-      m_renderer = new Renderer(m_mainWindow, 20, 20);
+      m_tileManager = new TileManager();
+      m_renderer = new Renderer(m_mainWindow, m_tileManager, 20, 20);
       m_running = false;
       m_queueLock = new object();
       m_queueThread = new Thread(Run);
       m_queueThread.Name = "Engine Queue Thread";
       m_cmdQueue = new Queue<Command>(0);
-      m_tileManager = new TileManager();
       m_selectedTile = new Tuple<int, int>(-1, -1);
     }
 
@@ -236,6 +235,5 @@ namespace Editor
     private Tuple<int, int> m_selectedTile;
 
     #endregion
-
   }
 }

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Editor
 {
+  using BitmapSource = System.Windows.Media.Imaging.BitmapSource;
   class API { [DllImport("gdi32.dll")] public static extern int DeleteObject(IntPtr hObject); }
 
   public enum SheetError { SUCCESS, UNSUPPORTED, TOO_LARGE, NOT_FOUND, INVALD_ARG, SIZE_MISMATCH };
@@ -20,7 +21,7 @@ namespace Editor
     private string m_fileName;
     private int m_tileSize;
     private int m_id;
-    private List<IntPtr> m_tileSources;
+    private List<BitmapSource> m_bmpSources;
     private SheetError m_error;
     
     /// <summary>
@@ -29,7 +30,7 @@ namespace Editor
     /// </summary>
     public TileSheet(string filePath, int tileSize, int id)
     {
-      m_tileSources = new List<IntPtr>(0);
+      m_bmpSources = new List<BitmapSource>(0);
 
       if(!File.Exists(filePath))
       {
@@ -80,20 +81,6 @@ namespace Editor
         CreateTiles(bitmap);
         bitmap.Dispose();
       }
-    }
-
-    ~TileSheet()
-    {
-      // The HBITMAP handles need to be deleted
-      foreach(IntPtr temp in m_tileSources)
-      {
-        if (temp != IntPtr.Zero)
-        {
-          API.DeleteObject(temp);
-        }
-      }
-
-      m_tileSources.Clear();
     }
 
     private void CreateTiles(Bitmap srcBitmap)
@@ -153,6 +140,9 @@ namespace Editor
       Rectangle destRect = new Rectangle(0, 0, TILE_DISPLAY_SIZE, TILE_DISPLAY_SIZE);
       Rectangle srcRect;
 
+      System.Windows.Int32Rect ptrRect = new System.Windows.Int32Rect(0, 0, TileSheet.TILE_DISPLAY_SIZE, TileSheet.TILE_DISPLAY_SIZE);
+      System.Windows.Media.Imaging.BitmapSizeOptions opts = System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions();
+
       for(int rIndex = 0; rIndex < rows; ++rIndex)
       {
         for (int cIndex = 0; cIndex < cols; ++cIndex)
@@ -165,22 +155,27 @@ namespace Editor
           gfx.DrawImage(bitmap, destRect, srcRect, units);
           gfx.Dispose();
 
-          m_tileSources.Add(tempMap.GetHbitmap());  // The INTPTR will be deleted in the Destructor
+          // Convert to WPF usable source
+          IntPtr srcBits = tempMap.GetHbitmap();
+          BitmapSource bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(srcBits, IntPtr.Zero, ptrRect, opts);
+          bmpSrc.Freeze();
+          m_bmpSources.Add(bmpSrc);
+          API.DeleteObject(srcBits);
         }
       }
     }
 
-    public IntPtr GetTileSourceAt(int index)
+    public BitmapSource GetBitmapSourceAt(int index)
     {
-      if(index >= 0 && index < m_tileSources.Count)
+      if (index >= 0 && index < m_bmpSources.Count)
       {
-        return m_tileSources.ElementAt(index);
+        return m_bmpSources.ElementAt(index);
       }
 
-      return IntPtr.Zero;
+      return null;
     }
 
-    public int GetNumTiles() { return m_tileSources.Count; }
+    public int GetNumTiles() { return m_bmpSources.Count; }
     public string GetFileName() { return m_fileName; }
     public int GetTileSize() { return m_tileSize; }
     public int GetID() { return m_id; }

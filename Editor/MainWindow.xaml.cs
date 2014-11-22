@@ -93,21 +93,11 @@ namespace Editor
       int currCol = 0;
       int currRow = 0;
 
-      Int32Rect srcRect = new Int32Rect(0, 0, TileSheet.TILE_DISPLAY_SIZE, TileSheet.TILE_DISPLAY_SIZE);
-      BitmapSizeOptions opts = BitmapSizeOptions.FromEmptyOptions();
-
       for(int index = 0; index < numTiles; ++index)
       {
-        IntPtr srcBits = (sheet.GetTileSourceAt(index));
-        if(srcBits == IntPtr.Zero)
-        {
-          UpdateSysMsg("Error loading Image Source for Sheet: " + sheet.GetFileName() + " Index: " + index.ToString());
-          continue;
-        }
-        var bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(srcBits, IntPtr.Zero, srcRect, opts);
         TileImage nextImg = new TileImage(sheet.GetID(), index);
         nextImg.Margin = new Thickness(3);
-        nextImg.Source = bmpSrc;
+        nextImg.Source = sheet.GetBitmapSourceAt(index);
         nextImg.MouseLeftButtonUp += TileButtonClicked;
 
         sheetGrid.Children.Add(nextImg);
@@ -131,27 +121,22 @@ namespace Editor
       tileStackPanel.Children.Add(sheetExpander);
     }
 
-    public void DrawMap(IntPtr srcPtr, int width, int height)
+    public void DrawMap(DrawingGroup group)
     {
-      // Convert Drawing.Bitmap to Imaging.BitmapSource
-      Int32Rect srcRect = new Int32Rect(0, 0, width, height);
-      BitmapSizeOptions opts = BitmapSizeOptions.FromEmptyOptions();
-      BitmapSource bmpSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(srcPtr, IntPtr.Zero, srcRect, opts);
+      DrawingBrush brush = new DrawingBrush(group);
+      int width = (int)group.Bounds.Width;
+      int height = (int)group.Bounds.Height;
 
-      if (MapCanvas.Width != width || MapImage.Width != width)
+      if(width != MapCanvas.Width)
       {
         MapCanvas.Width = width;
-        MapImage.Width = width;
       }
-
-      if (MapCanvas.Height != height || MapImage.Height != height)
+      if (height != MapCanvas.Height)
       {
         MapCanvas.Height = height;
-        MapImage.Height = height;
       }
 
-      MapImage.Source = bmpSrc;
-      GC.Collect();
+      MapCanvas.Background = brush;
     }
 
     #endregion
@@ -285,20 +270,21 @@ namespace Editor
     }
 
     #endregion
+  }
 
-    private class TileImage : Image
+  public class TileImage : System.Windows.Controls.Image
+  {
+    private int m_sheetID;
+    private int m_index;
+
+    public TileImage(int sheetID, int index)
+      : base()
     {
-      private int m_sheetID;
-      private int m_index;
-
-      public TileImage(int sheetID, int index) : base()
-      {
-        m_sheetID = sheetID;
-        m_index = index;
-      }
-
-      public int GetSheetID() { return m_sheetID; }
-      public int GetIndex() { return m_index; }
+      m_sheetID = sheetID;
+      m_index = index;
     }
+
+    public int GetSheetID() { return m_sheetID; }
+    public int GetIndex() { return m_index; }
   }
 }
