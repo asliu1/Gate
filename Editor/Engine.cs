@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows;
+using System.IO;
 
 namespace Editor
 {
@@ -26,6 +27,11 @@ namespace Editor
     public void TileSelected(int sheetID, int tileIndex)
     {
       AddCommand(Command.CreateTileSelectedCmd(sheetID, tileIndex));
+    }
+
+    public void SaveLevelClicked(string filename) //Angela add
+    {
+        AddCommand(Command.SaveLevelCmd(filename));
     }
 
     #endregion
@@ -60,6 +66,9 @@ namespace Editor
             break;
           case Command.Type.MSG_POPUP:
             PopUpMessage(cmd.m_tags[0]);
+            break;
+          case Command.Type.SAVE_LEVEL: //Angela add
+            SaveLevel(cmd.m_tags[0]);
             break;
           default:
             break;
@@ -128,6 +137,13 @@ namespace Editor
       // TODO
     }
 
+    private void SaveLevel(string filename)
+    { 
+      //TODO Angela add
+      StringBuilder sb = new StringBuilder();
+      sb.Append(m_tileManager.GetJson());
+      File.WriteAllText(filename, sb.ToString());
+    }
     #endregion
 
     #region EngineImplementation

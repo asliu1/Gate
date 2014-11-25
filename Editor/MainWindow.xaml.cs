@@ -183,7 +183,7 @@ namespace Editor
     private void ExitClicked(object sender, RoutedEventArgs e)
     {
       UpdateSysMsg("Exit Clicked");
-      this.Close();
+      this.Close(); //Angela add
     }
 
     // Level
@@ -199,19 +199,8 @@ namespace Editor
 
     private void SaveLevelClicked(object sender, RoutedEventArgs e)
     {
-        UpdateSysMsg("Save Level Clicked");
-        TileManager m_tileManager = m_mainEngine.getTileManager();
-        if (m_tileManager.m_sheets.Count != 0)
-        {
-            TileSheet ts = m_tileManager.GetSheet(0);
-            StringBuilder itslate = new StringBuilder();
-            for (int i = 0; i < ts.GetNumTiles(); ++i)
-            {
-                itslate.Append(ts.GetTileSourceAt(i).ToString());
-
-            }
-            File.WriteAllText("test.txt", itslate.ToString());
-        }
+      UpdateSysMsg("Save Level Clicked");
+      m_mainEngine.SaveLevelClicked("level.json");
     }
 
     private void SaveLevelAsClicked(object sender, RoutedEventArgs e)

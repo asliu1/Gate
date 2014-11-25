@@ -19,7 +19,8 @@ namespace Editor
       MSG_TEXT,
       MSG_POPUP,
       TILESHEET_LOAD,
-      TILE_SELECTED
+      TILE_SELECTED,
+      SAVE_LEVEL
     };
 
     #region PublicAPI
@@ -53,6 +54,14 @@ namespace Editor
       cmd.m_type = Type.TILE_SELECTED;
       cmd.m_props.Add(sheetID);
       cmd.m_props.Add(tileIndex);
+      return cmd;
+    }
+
+    static public Command SaveLevelCmd(string filename) //Angela add
+    {
+      Command cmd = new Command();
+      cmd.m_type = Type.SAVE_LEVEL;
+      cmd.m_tags.Add(filename);
       return cmd;
     }
 

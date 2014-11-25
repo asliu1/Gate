@@ -12,7 +12,7 @@ namespace Editor
   class API { [DllImport("gdi32.dll")] public static extern int DeleteObject(IntPtr hObject); }
 
   public enum SheetError { SUCCESS, UNSUPPORTED, TOO_LARGE, NOT_FOUND, INVALD_ARG, SIZE_MISMATCH };
-
+  
   public class TileSheet
   {
     public const int TILE_DISPLAY_SIZE = 64;
@@ -189,7 +189,7 @@ namespace Editor
 
   public class TileManager
   {
-    public List<TileSheet> m_sheets;
+    public List<TileSheet> m_sheets; //need to grab this list
     private SortedDictionary<int, int> m_idMap;
     private int m_nextId;
     
@@ -214,7 +214,7 @@ namespace Editor
       {
         m_sheets.Add(newSheet);
         m_idMap.Add(m_nextId, m_sheets.Count - 1);  // Map the ID to the index
-        sheetID = m_nextId;
+        sheetID = m_nextId; //when we reload these things will map together
         ++m_nextId; 
       }
       else
@@ -238,6 +238,12 @@ namespace Editor
       }
 
       return null;  // Failed to locate ID in map
+    }
+
+    public string GetJson() //JsonObject - need to figure out what class to include in order to use Json
+    { 
+      //TODO Angela add
+      return null;
     }
   }
 }
