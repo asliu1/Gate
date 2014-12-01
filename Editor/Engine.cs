@@ -31,7 +31,12 @@ namespace Editor
 
     public void SaveLevelClicked(string filename) //Angela add
     {
-        AddCommand(Command.SaveLevelCmd(filename));
+      AddCommand(Command.SaveLevelCmd(filename));
+    }
+
+    public void LoadLevelClicked(string filename) //Angela add
+    {
+      AddCommand(Command.LoadLevelCmd(filename));
     }
 
     #endregion
@@ -69,6 +74,9 @@ namespace Editor
             break;
           case Command.Type.SAVE_LEVEL: //Angela add
             SaveLevel(cmd.m_tags[0]);
+            break;
+          case Command.Type.LOAD_LEVEL: //Angela add
+            LoadLevel(cmd.m_tags[0]);
             break;
           default:
             break;
@@ -137,12 +145,20 @@ namespace Editor
       // TODO
     }
 
-    private void SaveLevel(string filename)
-    { 
-      //TODO Angela add
+    private void SaveLevel(string filename) //writes tilesheet info json into file
+    { //Angela add
       StringBuilder sb = new StringBuilder();
       sb.Append(m_tileManager.GetJson());
       File.WriteAllText(filename, sb.ToString());
+    }
+
+    private void LoadLevel(string filename) //TODO Angela add
+    {
+      StreamReader file = File.OpenText(filename);
+      string st = file.ReadToEnd();
+      file.Close();
+      st = @"{" + st + "}"; 
+      m_tileManager.LoadJson(st); 
     }
     #endregion
 

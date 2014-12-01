@@ -193,14 +193,15 @@ namespace Editor
     }
 
     private void LoadLevelClicked(object sender, RoutedEventArgs e)
-    {
+    {//Angela add
       UpdateSysMsg("Load Level Clicked");
+      m_mainEngine.LoadLevelClicked("level.json");//temp filename
     }
 
     private void SaveLevelClicked(object sender, RoutedEventArgs e)
-    {
+    {//Angela add
       UpdateSysMsg("Save Level Clicked");
-      m_mainEngine.SaveLevelClicked("level.json");
+      m_mainEngine.SaveLevelClicked("level.json");//temp filename
     }
 
     private void SaveLevelAsClicked(object sender, RoutedEventArgs e)

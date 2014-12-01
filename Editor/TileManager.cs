@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace Editor
 {
@@ -240,10 +242,38 @@ namespace Editor
       return null;  // Failed to locate ID in map
     }
 
-    public string GetJson() //JsonObject - need to figure out what class to include in order to use Json
-    { 
-      //TODO Angela add
-      return null;
+    public string GetJson() //writes tilesheet info in json
+    { //Angela add
+      StringBuilder sb = new StringBuilder();
+      StringWriter sw = new StringWriter(sb);
+      using (JsonWriter writer = new JsonTextWriter(sw))
+      {
+        writer.WritePropertyName("Tile Sheets");
+        writer.WriteStartArray();
+        foreach (TileSheet ts in m_sheets)
+        {
+          writer.WriteStartObject();
+          writer.WritePropertyName("filename");
+          writer.WriteValue(ts.GetFileName());
+          writer.WritePropertyName("Sheet ID");
+          writer.WriteValue(ts.GetID());
+          writer.WriteEndObject();
+        }
+        writer.WriteEnd();
+      }
+      return sb.ToString();
+   }
+
+    public void LoadJson(string json) //can properly read json, need to take values and map them to correct variables
+    {//TODO Angela add
+        JsonTextReader reader = new JsonTextReader(new StringReader(json));
+        while (reader.Read())
+        {
+            if (reader.Value != null)
+                Console.WriteLine(reader.Value);
+            else
+                Console.WriteLine("EMPTY: {0}", reader.TokenType);
+        }
     }
-  }
+ }
 }

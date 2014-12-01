@@ -20,7 +20,8 @@ namespace Editor
       MSG_POPUP,
       TILESHEET_LOAD,
       TILE_SELECTED,
-      SAVE_LEVEL
+      SAVE_LEVEL, //Angela add
+      LOAD_LEVEL //Angela add
     };
 
     #region PublicAPI
@@ -61,6 +62,14 @@ namespace Editor
     {
       Command cmd = new Command();
       cmd.m_type = Type.SAVE_LEVEL;
+      cmd.m_tags.Add(filename);
+      return cmd;
+    }
+
+    static public Command LoadLevelCmd(string filename) //Angela add
+    {
+      Command cmd = new Command();
+      cmd.m_type = Type.LOAD_LEVEL;
       cmd.m_tags.Add(filename);
       return cmd;
     }
