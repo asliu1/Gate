@@ -167,6 +167,7 @@ namespace Editor
     private void ExitClicked(object sender, RoutedEventArgs e)
     {
       UpdateSysMsg("Exit Clicked");
+      this.Close();
     }
 
     // Level
@@ -180,11 +181,13 @@ namespace Editor
     private void LoadLevelClicked(object sender, RoutedEventArgs e)
     {
       UpdateSysMsg("Load Level Clicked");
+      m_mainEngine.LoadLevelClicked("level.json"); //TODO popup window
     }
 
     private void SaveLevelClicked(object sender, RoutedEventArgs e)
     {
       UpdateSysMsg("Save Level Clicked");
+      m_mainEngine.SaveLevelClicked("level.json"); //TODO popup window
     }
 
     private void SaveLevelAsClicked(object sender, RoutedEventArgs e)

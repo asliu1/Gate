@@ -19,7 +19,9 @@ namespace Editor
       MSG_TEXT,
       MSG_POPUP,
       TILESHEET_LOAD,
-      TILE_SELECTED
+      TILE_SELECTED,
+      SAVE_LEVEL,
+      LOAD_LEVEL
     };
 
     #region PublicAPI
@@ -45,6 +47,18 @@ namespace Editor
     static public Command CreateTileSelectedCmd(int sheetID, int tileIndex)
     {
       TileSelectCommand cmd = new TileSelectCommand(sheetID, tileIndex);
+      return cmd;
+    }
+
+    static public Command CreateSaveLevelCmd(string filename)
+    {
+      SaveLevelCommand cmd = new SaveLevelCommand(filename);
+      return cmd;
+    }
+
+    static public Command CreateLoadLevelCmd(string filename)
+    {
+      LoadLevelCommand cmd = new LoadLevelCommand(filename);
       return cmd;
     }
 
@@ -100,6 +114,28 @@ namespace Editor
       m_type = Type.TILE_SELECTED;
       m_sheetID = sheetID;
       m_tileIndex = tileIndex;
+    }
+  }
+
+  public class SaveLevelCommand : Command
+  {
+    public string m_filename;
+
+    public SaveLevelCommand(string filename)
+    {
+      m_type = Type.SAVE_LEVEL;
+      m_filename = filename;
+    }
+  }
+
+  public class LoadLevelCommand : Command
+  {
+    public string m_filename;
+
+    public LoadLevelCommand(string filename)
+    {
+      m_type = Type.LOAD_LEVEL;
+      m_filename = filename;
     }
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,15 @@ namespace Editor
       AddCommand(Command.CreateTileSelectedCmd(sheetID, tileIndex));
     }
 
+    public void SaveLevelClicked(string filename)
+    {
+      AddCommand(Command.CreateSaveLevelCmd(filename));
+    }
+
+    public void LoadLevelClicked(string filename)
+    {
+      AddCommand(Command.CreateLoadLevelCmd(filename));
+    }
     #endregion
 
     #region CommandProccessing
@@ -60,6 +70,12 @@ namespace Editor
             break;
           case Command.Type.MSG_POPUP:
             PopUpMessage(cmd);
+            break;
+          case Command.Type.SAVE_LEVEL:
+            SaveLevel(cmd);
+            break;
+          case Command.Type.LOAD_LEVEL:
+            LoadLevel(cmd);
             break;
           default:
             break;
@@ -160,6 +176,28 @@ namespace Editor
     private void PopUpMessage(string msg)
     {
       // TODO
+    }
+
+    private void SaveLevel(Command cmd)
+    {
+       try
+       {
+         SaveLevelCommand command = (SaveLevelCommand)cmd;
+         DisplayMessage("Save Level clicked filename : " + command.m_filename); 
+         //TODO
+       }
+       catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
+    }
+
+    private void LoadLevel(Command cmd)
+    {
+      try
+      {
+         LoadLevelCommand command = (LoadLevelCommand)cmd;
+         DisplayMessage("Load Level clicked filename : " + command.m_filename);
+         //TODO
+      }
+      catch (InvalidCastException) {/*Add Logging in Future for Internal Error*/}
     }
 
     #endregion
